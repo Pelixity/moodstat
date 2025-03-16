@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Moodstat",
+    "slug": "moodstat",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/images/moodstat-app-icon.png",
+    "scheme": "mdstat",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.pelixity.moodstat-dev"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/moodstat-app-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#037ABF"
+        }
+      ],
+      "expo-sqlite"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "139cd41c-6c1f-4d76-a3eb-0d1d8b573999"
+      }
+    },
+    "owner": "aramone"
+  }
+}
