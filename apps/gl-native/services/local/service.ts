@@ -4,17 +4,9 @@ import type { Calendar } from '@/types/Calendar';
 import { getHueFromRating } from '@/utilities/colors';
 import { getStartAndEndOfMonth, createCalendarStructure } from '@/utilities/date-time';
 
-export type CreateMoodResponse = MoodDetail & {
-    id: number;
-};
-
-export type MonthlyMoodSummaryResponse = {
-    calendar: Calendar;
-};
-
-export interface MoodResponse<ResponseType> {
-    error: string[] | undefined;
-    data: ResponseType | Record<string, never>; 
+export interface MoodResponse<T> {
+    error: string[] | null;
+    data: T | null; 
 };
 
 // TODO: add some sort of middleware to perform validations
@@ -22,13 +14,13 @@ export interface MoodResponse<ResponseType> {
 // TODO: refactor this since prepared statements are not
 // the recommended way for some reason (see transactions)
 export default class LocalMoodService {
-    _db: SQLiteDatabase | undefined = undefined;
+    private _db: SQLiteDatabase;
 
     constructor(db: SQLiteDatabase) {
         this._db = db;
     }
 
-    async createMoodRating(rating: number, description: string): MoodResponse<CreateMoodResponse> {
+    async createMoodRating(rating: number, description: string): Promise<MoodResponse<MoodDetail>> {
         const color = getHueFromRating(rating);
         const fixedMoodRating = Number(rating.toFixed(1));
         const statement = `
@@ -43,27 +35,25 @@ export default class LocalMoodService {
             );
         `;
 
-        // TODO: make sure response is following the expected type. Currently,
-        // it's the default expo SQLite response which with methods to get
-        // last inserted row
-        let response: MoodResponse<CreateMoodResponse>;
+        let response: MoodResponse<MoodDetail>;
         const createRating = await this._db.prepareAsync(statement);
         try {
             const data = await createRating.executeAsync({
                 $mood: fixedMoodRating,
                 $description: description,
                 $color: color,
-            }) as CreateMoodResponse; 
-            response = { data, error: null };
-        } catch (err) {
-            response = { data: {}, error: [`Failed to create rating: ${err.message}`] }; 
+            }); 
+            const newRating = await data.getFirstAsync() as MoodDetail;
+            response = { data: newRating, error: null };
+        } catch (err: any) {
+            response = { data: null, error: [`Failed to create rating: ${err.message}`] }; 
         } finally {
             await createRating.finalizeAsync();
         }
         return response;
     }
 
-    async getMoodRatingForDay(date: Date) {
+    async getMoodRatingForDay(date: Date): Promise<MoodResponse<MoodDetail[]>> {
         const startTime = new Date(date); 
         const endTime = new Date(date);
         startTime.setHours(0);
@@ -83,7 +73,7 @@ export default class LocalMoodService {
             WHERE created_at >= $startTime AND created_at <= $endTime;
         `; 
 
-        let response: MoodResponse<(MoodDetail & { id: number })[]>; 
+        let response: MoodResponse<MoodDetail[]>; 
         const summaryStatement = await this._db.prepareAsync(summaryQuery);
         try {
             // divide by 1000 to get rid of milliseconds since SQLite
@@ -92,17 +82,17 @@ export default class LocalMoodService {
                 $startTime: startTime.getTime() / 1000,
                 $endTime: endTime.getTime() / 1000,
             });
-            const logsForDay = await data.getAllAsync();
-            response = { data: { logsForDay }, error: null };
-        } catch (err) {
-            response = { error: [err], data: {} };
+            const logsForDay = await data.getAllAsync() as MoodDetail[];
+            response = { data: logsForDay, error: null };
+        } catch (err: any) {
+            response = { error: [err.message], data: null };
         } finally {
             await summaryStatement.finalizeAsync();
         }
         return response;
     }
 
-    async getMonthlyMoodSummary(month: number, year: number) {
+    async getMonthlyMoodSummary(month: number, year: number): Promise<MoodResponse<Calendar>> {
         const { startTime, endTime } = getStartAndEndOfMonth(month, year);
         const summaryQuery = `
             SELECT
@@ -114,7 +104,7 @@ export default class LocalMoodService {
             WHERE created_at >= $startTime AND created_at <= $endTime;
         `; 
 
-        let response: MoodResponse<MonthlyMoodSummaryResponse>; 
+        let response: MoodResponse<Calendar>; 
         const summaryStatement = await this._db.prepareAsync(summaryQuery);
         try {
             // divide by 1000 to get rid of milliseconds since SQLite
@@ -123,11 +113,11 @@ export default class LocalMoodService {
                 $startTime: startTime.getTime() / 1000,
                 $endTime: endTime.getTime() / 1000,
             });
-            const logsForMonth = await data.getAllAsync();
+            const logsForMonth = await data.getAllAsync() as MoodDetail[];
             const calendarData = createCalendarStructure(month, year, logsForMonth);
-            response = { data: { calendarData }, error: null };
-        } catch (err) {
-            response = { error: [err], data: {} };
+            response = { data: calendarData, error: null };
+        } catch (err: any) {
+            response = { error: [err.message], data: null };
         } finally {
             await summaryStatement.finalizeAsync();
         }

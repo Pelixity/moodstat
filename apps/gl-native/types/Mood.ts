@@ -3,7 +3,7 @@ export type MoodDetail = {
     mood: number;
     description: string;
     color?: string;
-    created_at: Date;
+    created_at: number;
 }
 
 export type MoodSummary = {

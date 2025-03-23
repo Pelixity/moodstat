@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const styles = {
+export default StyleSheet.create({
     day: {
         display: 'flex',
         flexDirection: 'column',
@@ -40,6 +40,5 @@ const styles = {
         borderColor: 'rgb(2, 133, 199)',
         borderWidth: 2,
     },
-};
+});
 
-export default StyleSheet.create(styles);

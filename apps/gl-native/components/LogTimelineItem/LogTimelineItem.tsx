@@ -7,7 +7,7 @@ type LogTimelineItemProps = Omit<MoodDetail, 'created_at'> & {
     createdAt: number;
 }
 
-export default function LogTimelineItem({ id, color, mood, description, createdAt}: LogTimelineItemProps) {
+export default function LogTimelineItem({ id, color, mood, description, createdAt }: LogTimelineItemProps) {
     // TODO: extract this to helper (refactor)
     const time = new Date(createdAt * 1000);
     const hours = time.getHours() % 12 !== 0 ? time.getHours() % 12 : 12;

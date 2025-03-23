@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const styles = {
+export default StyleSheet.create({
     container: {
         display: 'flex',
         flexDirection: 'column',
@@ -53,6 +53,5 @@ const styles = {
         fontStyle: 'italic',
         opacity: 0.5,
     },
-};
+});
 
-export default StyleSheet.create(styles);

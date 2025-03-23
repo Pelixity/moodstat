@@ -1,15 +1,18 @@
+import type { Calendar as CalendarType } from '@/types/Calendar';
 import { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Link, useFocusEffect } from 'expo-router';
-import { useSQLiteContext } from 'expo-sqlite';
+import { useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import useErrorStore from '@/store/ErrorStore';
 import useService from '@/hooks/useService';
+import { Toast } from '@/components/Toast';
 import { Calendar } from '@/components/Calendar';
 import { getDateComponents } from '@/utilities/date-time';
 
 export default function HomeScreen() {
+    const toastError = useErrorStore(state => state.toastError);
     const [today, setToday] = useState<Date>(new Date());
-    const [calendarData, setCalendarData] = useState(null);
+    const [calendarData, setCalendarData] = useState<CalendarType | null>(null);
     // TODO: display errors in a consistent way
     const [errors, setErrors] = useState(null);
     const localService = useService('LOCAL');
@@ -42,8 +45,9 @@ export default function HomeScreen() {
                 <Calendar
                     month={currentMonth}
                     year={currentYear}
-                    calendarData={calendarData?.calendarData ?? {}}
+                    calendarData={calendarData ?? {}}
                 />
+                {!!toastError && <Toast message={toastError} />}
             </View>
         </SafeAreaView>
     );

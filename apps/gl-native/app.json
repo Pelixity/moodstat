@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.pelixity.moodstat-dev"
+      "bundleIdentifier": "com.pelixity.moodstat"
     },
     "plugins": [
       "expo-router",

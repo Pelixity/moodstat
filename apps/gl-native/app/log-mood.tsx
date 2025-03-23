@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Text, View, StyleSheet, type NativeEvent } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MoodForm } from '@/components/MoodForm';
 import { DescriptionInput } from '@/components/DescriptionInput';
@@ -26,18 +26,18 @@ export default function LogMood() {
     // tabs and I'm too lazy to properly fix it right now
     return (
         <SafeAreaView style={{ paddingBottom: 64 }}>
-            <MoodForm style={styles.formContainer} data={formData} validation={formValidation}>
-                <RatingInput
-                    onChange={handleFormFieldChange('rating')}
-                    value={formData['rating']}
-                    isValid={formValidation['rating']}
-                />
-                <DescriptionInput
-                    onChange={handleFormFieldChange('description')}
-                    value={formData['description']}
-                    isValid={formValidation['description']}
-                />
-            </MoodForm>
+                <MoodForm style={styles.formContainer} data={formData} validation={formValidation}>
+                    <RatingInput
+                        onChange={handleFormFieldChange('rating')}
+                        value={formData['rating']}
+                        isValid={formValidation['rating']}
+                    />
+                    <DescriptionInput
+                        onChange={handleFormFieldChange('description')}
+                        value={formData['description']}
+                        isValid={formValidation['description']}
+                    />
+                </MoodForm>
         </SafeAreaView>
     ); 
 };
@@ -49,6 +49,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingTop: 24,
         height: '100%',
-        justifyContent: 'start',
+        justifyContent: 'space-evenly',
     },
 });
