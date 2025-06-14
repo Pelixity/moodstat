@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "MX9Y883APD.com.pelixity.moodstat-dev",
+        "paths": ["/sync"]
+      },
+      {
+        "appID": "MX9Y883APD.com.pelixity.moodstat",
+        "paths": ["/sync"]
+      }
+    ]
+  }
+}
